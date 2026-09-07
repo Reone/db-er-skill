@@ -4,6 +4,16 @@
 
 从任意数据库（MySQL、PostgreSQL、SQL Server 或 SQLite）一键生成可交互的自包含 ER 图 HTML 文件，无需任何前端构建步骤。
 
+## 支持的 AI 编程助手
+
+| 助手 | 协议文件 | 使用方式 |
+|------|----------|---------|
+| **Claude Code** | `SKILL.md` | 在 Claude Code 中输入 `/db-er` |
+| **OpenAI Codex CLI** | `AGENTS.md` | 在此目录执行 `codex` 时自动加载 |
+| **Cursor** | `.cursor/rules/db-er.mdc` | 作为 Cursor rule 自动加载 |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | 在 Copilot Chat 中自动加载 |
+| **Continue.dev** | `.continuerc.json` | 输入 `/db-er` slash 命令 |
+
 ## 功能特性
 
 - 基于 ECharts 5 的力导向图，自动推断表间关联关系

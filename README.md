@@ -4,6 +4,16 @@
 
 Generate a fully self-contained, interactive ER diagram HTML file from any database — MySQL, PostgreSQL, SQL Server, or SQLite — with zero front-end build steps.
 
+## Supported AI assistants
+
+| Assistant | Protocol file | How to use |
+|-----------|--------------|------------|
+| **Claude Code** | `SKILL.md` | Type `/db-er` in Claude Code |
+| **OpenAI Codex CLI** | `AGENTS.md` | Auto-loaded when running `codex` in this directory |
+| **Cursor** | `.cursor/rules/db-er.mdc` | Auto-loaded as a Cursor rule in this project |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Auto-loaded in Copilot Chat |
+| **Continue.dev** | `.continuerc.json` | Type `/db-er` as a slash command |
+
 ## Features
 
 - Force-directed graph (ECharts 5) with automatic relationship inference

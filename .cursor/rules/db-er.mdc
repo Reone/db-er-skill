@@ -1,0 +1,77 @@
+---
+description: Use this rule when the user asks to generate, create, or build an ER diagram, database relationship diagram, or schema visualization from a database or SQL schema.
+globs:
+alwaysApply: false
+---
+
+# DB ER Diagram Generator
+
+When asked to generate an ER diagram or database relationship visualization, use the `generate.py` script in this project.
+
+## Invocation
+
+```bash
+# From a live database
+python generate.py --dsn "<connection-string>" --output er-diagram.html
+
+# From a JSON schema file (offline)
+python generate.py --schema-file schema.json --output er-diagram.html
+
+# Specific tables only
+python generate.py --dsn "<dsn>" --tables "table1,table2,table3" --output er-diagram.html
+```
+
+## Connection string formats
+
+| Database | Format |
+|----------|--------|
+| MySQL | `mysql://user:pass@host:3306/dbname` |
+| PostgreSQL | `postgres://user:pass@host:5432/dbname` |
+| SQL Server | `sqlserver://sa:pass@host:1433/dbname` |
+| SQLite | `sqlite:///path/to/file.db` |
+
+## Key options
+
+- `--output` — output HTML path (default: `er-diagram.html`)
+- `--title` — page title shown in browser
+- `--tables` — comma-separated whitelist of table names
+- `--exclude` — comma-separated blacklist of table names
+- `--theme` — `dark` (default) or `light`
+- `--font-size` — base font size in px (default: 16)
+- `--no-infer-rels` — disable automatic relationship inference
+
+## As a Python module
+
+```python
+from generate import ERGenerator
+
+ERGenerator(
+    dsn="mysql://root:pass@localhost:3306/mydb",
+    output="er.html",
+    title="My System ER Diagram",
+).run()
+```
+
+## Schema JSON format (offline mode)
+
+```json
+{
+  "table_name": {
+    "comment": "Table description",
+    "cols": [
+      {"key": "PRI", "col": "id",      "type": "int",     "cmt": "Primary key"},
+      {"key": "MUL", "col": "user_id", "type": "int",     "cmt": "→ users.id"}
+    ]
+  }
+}
+```
+
+Use `→ target_table.column` in the `cmt` field to explicitly annotate relationships.
+
+## Install dependencies
+
+```bash
+pip install pymysql              # MySQL
+pip install psycopg2-binary      # PostgreSQL
+pip install pymssql              # SQL Server
+```

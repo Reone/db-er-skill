@@ -1,0 +1,21 @@
+{
+  "docs": [
+    {
+      "title": "db-er-skill",
+      "startUrl": "https://github.com/Reone/db-er-skill/blob/main/README.md"
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "file",
+      "params": {}
+    }
+  ],
+  "slashCommands": [
+    {
+      "name": "db-er",
+      "description": "Generate an interactive ER diagram HTML from a database or schema file",
+      "step": "Run generate.py to create an ER diagram. Usage: python generate.py --dsn \"<connection-string>\" --output er.html\n\nConnection string formats:\n  MySQL:      mysql://user:pass@host:3306/dbname\n  PostgreSQL: postgres://user:pass@host:5432/dbname\n  SQL Server: sqlserver://sa:pass@host:1433/dbname\n  SQLite:     sqlite:///path/to/file.db\n\nCommon options:\n  --tables    comma-separated table whitelist\n  --exclude   comma-separated table blacklist\n  --theme     dark (default) or light\n  --output    output HTML path\n\nFor offline generation from a JSON schema file:\n  python generate.py --schema-file schema.json --output er.html"
+    }
+  ]
+}
