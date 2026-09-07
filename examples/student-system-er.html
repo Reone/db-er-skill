@@ -83,7 +83,7 @@ body{background:var(--bg);font-family:var(--font);font-size:var(--fs);color:var(
   display:flex;align-items:center;gap:5px;user-select:none}
 .sg-hd:hover{color:var(--muted)}
 .sg-hd .gdot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
-.sg-hd .ga{font-size:9px;opacity:.6;margin-left:auto;transition:transform .12s}
+.sg-hd .ga{font-size:var(--fs-xs);opacity:.6;margin-left:auto;transition:transform .12s}
 .sg-hd.col .ga{transform:rotate(-90deg)}
 .sg-items.hide{display:none}
 .st{padding:3px 8px 3px 18px;cursor:pointer;display:flex;flex-direction:column;
@@ -92,18 +92,18 @@ body{background:var(--bg);font-family:var(--font);font-size:var(--fs);color:var(
 .st-n{font-family:var(--mono);font-size:var(--fs-xs);color:var(--ntc);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .st.active .st-n{color:var(--acc-t)}
-.st-s{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-s{font-size:var(--fs-xs);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #chart{flex:1;min-width:0}
 #det{flex-shrink:0;width:300px;background:var(--surf);border-left:1px solid var(--bd);
   display:flex;flex-direction:column;overflow:hidden;
   transition:width .15s,background .18s,border-color .18s}
-#det.hide{width:0;border-left:none;overflow:hidden}
+#det.hide{transform:translateX(600px)}
 #dh{padding:10px 12px 8px;border-bottom:1px solid var(--bd);flex-shrink:0}
 #dh h2{font-family:var(--mono);font-size:var(--fs-sm);font-weight:700;color:var(--text);
   word-break:break-all;margin-bottom:2px}
 .d-sub{font-size:var(--fs-sm);color:var(--muted);margin-bottom:5px}
 .d-meta{font-size:var(--fs-xs);color:var(--dim);display:flex;gap:8px;flex-wrap:wrap}
-.d-x{float:right;cursor:pointer;color:var(--dim);font-size:14px;line-height:1}
+.d-x{float:right;cursor:pointer;color:var(--dim);font-size:var(--fs-sm);line-height:1}
 .d-x:hover{color:var(--text)}
 .tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
 .tab{flex:1;padding:6px 0;text-align:center;font-size:var(--fs-sm);cursor:pointer;
@@ -116,7 +116,7 @@ body{background:var(--bg);font-family:var(--font);font-size:var(--fs);color:var(
 .fr:nth-child(even){background:var(--even)}
 .fr:hover{background:var(--surf2)}
 .fr.mf{background:var(--hib)!important}
-.fk{font-size:10px;font-weight:700;padding:1px 3px;border-radius:2px;flex-shrink:0}
+.fk{font-size:var(--fs-xs);font-weight:700;padding:1px 3px;border-radius:2px;flex-shrink:0}
 .fpk{background:#fef3c7;color:#92400e}
 .fuk{background:#f0fdf4;color:#15803d}
 .fix{background:#f5f3ff;color:#6d28d9}
@@ -236,7 +236,7 @@ const GROUPS=[
 {"id":"教职工","label":"教职工","x":0,"y":822,"w":272,"h":230,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","cx":136,"cy":937},
 {"id":"用户/权限","label":"用户/权限","x":612,"y":958,"w":272,"h":274,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","cx":748,"cy":1095}
 ];
-const CATS=[{"name":"课程"},{"name":"成绩/考试"},{"name":"学籍/学生"},{"name":"教职工"},{"name":"其他"},{"name":"字典/编码"},{"name":"用户/权限"},{"name":"系统表"}];
+const CATS=[{"name":"其他"},{"name":"系统表"},{"name":"成绩/考试"},{"name":"课程"},{"name":"字典/编码"},{"name":"用户/权限"},{"name":"学籍/学生"},{"name":"教职工"}];
 
 const CANVAS_W=1844;const CANVAS_H=1394;const FOLD_N=10;
 // ── adjacency ──────────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ function openDet(id,hiCol){
   const tr=document.getElementById('tr');
   const ol=(adjOut[id]||[]).map(e=>`<div class="ri"><div><span class="ra">→</span><span class="rt">${e.target}</span></div>${e.pairs.map(p=>`<div class="rd">${p.desc}</div><div class="rf">${p.sf} → ${p.tf}</div>`).join('')}</div>`);
   const il=(adjIn[id]||[]).map(e=>`<div class="ri"><div><span class="ra">←</span><span class="rt">${e.source}</span></div>${e.pairs.map(p=>`<div class="rd">${p.desc}</div><div class="rf">${p.sf} ← ${p.tf}</div>`).join('')}</div>`);
-  tr.innerHTML=ol.concat(il).join('')||`<div style="padding:10px;color:var(--dim);font-size:13px">无关联</div>`;
+  tr.innerHTML=ol.concat(il).join('')||`<div style="padding:10px;color:var(--dim);font-size:var(--fs-sm)">无关联</div>`;
   document.getElementById('det').classList.remove('hide');
   showTab('f');
   if(hiCol)setTimeout(()=>{const f=tf.querySelector('.mf');if(f)f.scrollIntoView({block:'nearest'});},50);
@@ -402,7 +402,7 @@ searchEl.addEventListener('input',()=>{
           <div class="sr-sub">${hiStr(n.sub,q)}</div>
           ${ch.length?'<div class="sr-col">'+ch.slice(0,3).map(c=>hiStr(c.n,q)+(c.c?' — '+hiStr(c.c,q):'')).join('  ')+'</div>':''}
         </div>`).join('')
-    :`<div style="padding:10px 12px;color:var(--dim);font-size:13px">无匹配</div>`;
+    :`<div style="padding:10px 12px;color:var(--dim);font-size:var(--fs-sm)">无匹配</div>`;
   srEl.style.display='block';
 });
 function pickSearch(id,q){

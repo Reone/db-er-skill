@@ -97,7 +97,7 @@ gen.run()
 | `--tables` | str | 全库 | 逗号分隔的表名白名单 |
 | `--exclude` | str | 空 | 逗号分隔的表名黑名单 |
 | `--schema-file` | str | 空 | 直接从 JSON schema 文件生成，跳过数据库连接 |
-| `--font-size` | int | `16` | 基础字号（px），sm=base-2，xs=base-4 |
+| `--font-size` | int | `16` | 基础字号（px），sm=base-2，xs=base-4。16px 为推荐值，经实际使用验证阅读舒适度优于 14px |
 | `--theme` | str | `dark` | 初始主题 `dark` 或 `light` |
 | `--no-infer-rels` | flag | 关 | 禁用自动关联推断，仅显示显式外键 |
 | `--max-cols-preview` | int | `10` | 节点折叠前显示的最大列数 |

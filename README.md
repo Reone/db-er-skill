@@ -33,7 +33,7 @@ Options:
   --title           Page title         [default: 数据库可交互关系图]
   --tables          Comma-separated table whitelist
   --exclude         Comma-separated table blacklist
-  --font-size       Base font size px  [default: 16]
+  --font-size       Base font size px  [default: 16, recommended — verified more readable than 14px]
   --theme           dark | light       [default: dark]
   --no-infer-rels   Disable automatic relationship inference
   --max-cols-preview Max columns before folding [default: 10]
