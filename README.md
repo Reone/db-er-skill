@@ -115,7 +115,9 @@ SQLite uses Python's built-in `sqlite3` — no extra install needed.
 ## Examples
 
 - [`examples/student-system-er.html`](examples/student-system-er.html) — Student management system (20 tables)
+- [`examples/student-system-er.png`](examples/student-system-er.png) — Student management system (20 tables)
 - [`examples/ecommerce-er.html`](examples/ecommerce-er.html) — E-commerce order system (15 tables)
+- [`examples/ecommerce-er.png`](examples/ecommerce-er.png) — E-commerce order system (15 tables)
 
 ## License
 
