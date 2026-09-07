@@ -1,5 +1,7 @@
 # db-er-skill
 
+[English](README.md)
+
 从任意数据库（MySQL、PostgreSQL、SQL Server 或 SQLite）一键生成可交互的自包含 ER 图 HTML 文件，无需任何前端构建步骤。
 
 ## 功能特性

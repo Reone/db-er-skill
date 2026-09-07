@@ -1,5 +1,7 @@
 # db-er-skill
 
+[中文文档](README.zh.md)
+
 Generate a fully self-contained, interactive ER diagram HTML file from any database — MySQL, PostgreSQL, SQL Server, or SQLite — with zero front-end build steps.
 
 ## Features
