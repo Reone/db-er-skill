@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>电商订单系统 ER 图</title>
+<style>
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:Consolas,"Cascadia Code",monospace;
+  --r:5px;
+  --fs:16px;--fs-sm:14px;--fs-xs:12px;
+}
+[data-theme="dark"]{
+  --bg:#0f172a;--surf:#1e293b;--surf2:#263347;--bd:#334155;
+  --text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --acc:#818cf8;--acc-bg:#312e81;--acc-t:#c7d2fe;
+  --ntc:#93c5fd;--lc:#475569;--ec:#818cf8;
+  --ttbg:#1e293b;--ttbd:#334155;--tttext:#e2e8f0;
+  --ac:#86efac;--hib:rgba(99,102,241,.32);--hit:#c7d2fe;
+  --smc:#86efac;--cbg:#0f172a;--even:#172033;
+}
+[data-theme="light"]{
+  --bg:#f8fafc;--surf:#ffffff;--surf2:#f1f5f9;--bd:#e2e8f0;
+  --text:#0f172a;--muted:#475569;--dim:#94a3b8;
+  --acc:#4f46e5;--acc-bg:#ede9fe;--acc-t:#3730a3;
+  --ntc:#1d4ed8;--lc:#94a3b8;--ec:#4f46e5;
+  --ttbg:#ffffff;--ttbd:#e2e8f0;--tttext:#0f172a;
+  --ac:#15803d;--hib:rgba(79,70,229,.15);--hit:#3730a3;
+  --smc:#15803d;--cbg:#f8fafc;--even:#f8fafc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:var(--font);font-size:var(--fs);color:var(--text);
+  height:100vh;display:flex;flex-direction:column;overflow:hidden;
+  transition:background .18s,color .18s}
+#bar{flex-shrink:0;height:48px;background:var(--surf);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:7px;padding:0 14px;z-index:30;
+  user-select:none;transition:background .18s,border-color .18s}
+#bar h1{font-size:var(--fs-sm);font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0}
+.sp{width:1px;height:22px;background:var(--bd);flex-shrink:0}
+.btn{padding:4px 11px;border:1px solid var(--bd);border-radius:var(--r);background:var(--surf);
+  cursor:pointer;font-size:var(--fs-sm);color:var(--muted);white-space:nowrap;
+  transition:all .1s;line-height:1.4}
+.btn:hover{background:var(--surf2);color:var(--text)}
+.btn.on{background:var(--acc-bg);border-color:var(--acc);color:var(--acc-t)}
+#sw{position:relative;flex:0 0 210px}
+#sw svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  color:var(--dim);pointer-events:none}
+#search{width:100%;padding:5px 26px 5px 26px;border:1px solid var(--bd);border-radius:var(--r);
+  font-size:var(--fs-sm);background:var(--bg);color:var(--text);outline:none;
+  transition:border-color .15s,background .18s}
+#search:focus{border-color:var(--acc);background:var(--surf)}
+#sc{position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  font-size:var(--fs-xs);color:var(--dim)}
+.lg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:auto}
+.li{display:flex;align-items:center;gap:3px;font-size:var(--fs-xs);color:var(--muted);
+  cursor:pointer;padding:2px 5px;border-radius:3px;white-space:nowrap;transition:background .1s}
+.li:hover{background:var(--surf2)}.li.off{opacity:.25}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+#sr{position:absolute;top:48px;left:0;right:0;max-height:340px;background:var(--surf);
+  border-bottom:1px solid var(--bd);overflow-y:auto;z-index:40;display:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);transition:background .18s}
+.sr-row{padding:7px 12px;border-bottom:1px solid var(--bd);cursor:pointer;
+  display:flex;flex-direction:column;gap:2px}
+.sr-row:hover{background:var(--surf2)}
+.sr-tn{font-family:var(--mono);font-size:var(--fs-sm);font-weight:600;color:var(--ntc)}
+.sr-sub{font-size:var(--fs-xs);color:var(--dim)}
+.sr-col{font-size:var(--fs-xs);color:var(--smc);font-family:var(--mono)}
+.hi{background:var(--hib);border-radius:2px;color:var(--hit)}
+#layout{flex:1;display:flex;overflow:hidden}
+#sb{flex-shrink:0;width:210px;background:var(--surf);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width .15s,background .18s,border-color .18s}
+#sb.hide{width:0;border-right:none;overflow:hidden}
+#sb-top{padding:8px 8px 6px;border-bottom:1px solid var(--bd);flex-shrink:0}
+#sb-q{width:100%;padding:4px 7px;border:1px solid var(--bd);border-radius:var(--r);
+  background:var(--bg);color:var(--text);font-size:var(--fs-sm);outline:none;
+  transition:border-color .15s,background .18s}
+#sb-q:focus{border-color:var(--acc)}
+#sb-body{flex:1;overflow-y:auto;padding:4px 0}
+.sg{margin-bottom:1px}
+.sg-hd{padding:5px 8px 3px;font-size:var(--fs-xs);font-weight:700;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+  display:flex;align-items:center;gap:5px;user-select:none}
+.sg-hd:hover{color:var(--muted)}
+.sg-hd .gdot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.sg-hd .ga{font-size:9px;opacity:.6;margin-left:auto;transition:transform .12s}
+.sg-hd.col .ga{transform:rotate(-90deg)}
+.sg-items.hide{display:none}
+.st{padding:3px 8px 3px 18px;cursor:pointer;display:flex;flex-direction:column;
+  gap:1px;border-radius:var(--r);margin:0 3px;transition:background .08s}
+.st:hover{background:var(--surf2)}.st.active{background:var(--acc-bg)}
+.st-n{font-family:var(--mono);font-size:var(--fs-xs);color:var(--ntc);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st.active .st-n{color:var(--acc-t)}
+.st-s{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#chart{flex:1;min-width:0}
+#det{flex-shrink:0;width:300px;background:var(--surf);border-left:1px solid var(--bd);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width .15s,background .18s,border-color .18s}
+#det.hide{width:0;border-left:none;overflow:hidden}
+#dh{padding:10px 12px 8px;border-bottom:1px solid var(--bd);flex-shrink:0}
+#dh h2{font-family:var(--mono);font-size:var(--fs-sm);font-weight:700;color:var(--text);
+  word-break:break-all;margin-bottom:2px}
+.d-sub{font-size:var(--fs-sm);color:var(--muted);margin-bottom:5px}
+.d-meta{font-size:var(--fs-xs);color:var(--dim);display:flex;gap:8px;flex-wrap:wrap}
+.d-x{float:right;cursor:pointer;color:var(--dim);font-size:14px;line-height:1}
+.d-x:hover{color:var(--text)}
+.tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
+.tab{flex:1;padding:6px 0;text-align:center;font-size:var(--fs-sm);cursor:pointer;
+  color:var(--dim);border-bottom:2px solid transparent;transition:all .1s}
+.tab:hover{color:var(--muted)}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+#tf{display:none;flex-direction:column;overflow-y:auto;flex:1}
+#tf.show{display:flex}
+.fr{display:flex;align-items:baseline;padding:3px 10px;
+  border-bottom:1px solid var(--bd);gap:5px;font-size:var(--fs-sm)}
+.fr:nth-child(even){background:var(--even)}
+.fr:hover{background:var(--surf2)}
+.fr.mf{background:var(--hib)!important}
+.fk{font-size:10px;font-weight:700;padding:1px 3px;border-radius:2px;flex-shrink:0}
+.fpk{background:#fef3c7;color:#92400e}
+.fuk{background:#f0fdf4;color:#15803d}
+.fix{background:#f5f3ff;color:#6d28d9}
+.fn{font-family:var(--mono);color:var(--ntc);flex:0 0 110px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ft{color:var(--dim);flex:0 0 60px;font-size:var(--fs-xs)}
+.fc{color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tr{display:none;flex-direction:column;overflow-y:auto;flex:1;padding:6px 0}
+#tr.show{display:flex}
+.ri{padding:5px 10px;border-bottom:1px solid var(--bd)}
+.ri:last-child{border-bottom:none}
+.ra{color:var(--acc);font-weight:700;margin-right:3px}
+.rt{color:var(--ntc);font-family:var(--mono);font-size:var(--fs-sm)}
+.rd{color:var(--dim);font-size:var(--fs-xs);margin-top:1px}
+.rf{font-size:var(--fs-xs);color:var(--dim);font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div id="bar">
+  <h1>电商订单系统 ER 图</h1>
+  <div class="sp"></div>
+  <div id="sw">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10 10l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <input id="search" type="text" placeholder="搜索表名 / 字段 / 注释…" autocomplete="off"/>
+    <span id="sc"></span>
+  </div>
+  <button class="btn on"  id="btn-sb"     onclick="toggleSb()">隐藏列表</button>
+  <button class="btn on"  id="btn-labels" onclick="toggleLabels()">隐藏标签</button>
+  <button class="btn"     id="btn-nm"     onclick="toggleNM()">显示中文名</button>
+  <button class="btn"     onclick="resetView()">重置布局</button>
+  <button class="btn"     id="btn-theme"  onclick="toggleTheme()">🌙 暗色模式</button>
+  <div class="sp"></div>
+  <div class="lg" id="legend"></div>
+</div>
+<div style="position:relative;z-index:35"><div id="sr"></div></div>
+<div id="layout">
+  <div id="sb">
+    <div id="sb-top">
+      <input id="sb-q" type="text" placeholder="过滤表名 / 注释…" autocomplete="off"/>
+    </div>
+    <div id="sb-body"></div>
+  </div>
+  <div id="chart"></div>
+  <div id="det" class="hide">
+    <div id="dh">
+      <span class="d-x" onclick="closeDet()">✕</span>
+      <h2 id="d-name"></h2>
+      <div class="d-sub" id="d-sub"></div>
+      <div class="d-meta" id="d-meta"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab on" id="tab-tf" onclick="showTab('f')">字段</div>
+      <div class="tab"    id="tab-tr" onclick="showTab('r')">关联</div>
+    </div>
+    <div id="tf"></div>
+    <div id="tr"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+const NODES=[
+{"id":"cart","grp":"其他","sub":"购物车","x":14,"y":34,"hd":"#475569","hdbg":"#f1f5f9","bdc":"#475569","colCount":6,"symbolSize":20,"degree":2,"itemStyle":{"color":"#f1f5f9","borderColor":"#475569","borderWidth":2},"label":{"show":true,"color":"#475569","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"user_id","t":"bigint","c":"用户 → user.id"},{"k":"MUL","n":"sku_id","t":"bigint","c":"SKU → sku.id"},{"k":"","n":"quantity","t":"int","c":"数量"},{"k":"","n":"checked","t":"tinyint","c":"是否选中"},{"k":"","n":"updated_at","t":"datetime","c":"更新时间"}]},
+{"id":"coupon","grp":"其他","sub":"优惠券模板","x":282,"y":34,"hd":"#475569","hdbg":"#f1f5f9","bdc":"#475569","colCount":6,"symbolSize":18,"degree":1,"itemStyle":{"color":"#f1f5f9","borderColor":"#475569","borderWidth":2},"label":{"show":true,"color":"#475569","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"int","c":"主键"},{"k":"","n":"name","t":"varchar","c":"优惠券名称"},{"k":"","n":"type","t":"tinyint","c":"类型 1满减 2折扣"},{"k":"","n":"value","t":"decimal","c":"优惠金额/折扣率"},{"k":"","n":"min_amount","t":"decimal","c":"最低消费金额"},{"k":"","n":"expire_days","t":"int","c":"有效天数"}]},
+{"id":"logistics","grp":"其他","sub":"物流记录表","x":14,"y":236,"hd":"#475569","hdbg":"#f1f5f9","bdc":"#475569","colCount":6,"symbolSize":18,"degree":1,"itemStyle":{"color":"#f1f5f9","borderColor":"#475569","borderWidth":2},"label":{"show":true,"color":"#475569","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"order_id","t":"bigint","c":"订单 → order.id"},{"k":"","n":"company","t":"varchar","c":"物流公司"},{"k":"","n":"tracking_no","t":"varchar","c":"快递单号"},{"k":"","n":"status","t":"tinyint","c":"物流状态"},{"k":"","n":"shipped_at","t":"datetime","c":"发货时间"}]},
+{"id":"refund","grp":"其他","sub":"退款退货表","x":282,"y":236,"hd":"#475569","hdbg":"#f1f5f9","bdc":"#475569","colCount":7,"symbolSize":20,"degree":2,"itemStyle":{"color":"#f1f5f9","borderColor":"#475569","borderWidth":2},"label":{"show":true,"color":"#475569","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"order_id","t":"bigint","c":"订单 → order.id"},{"k":"MUL","n":"user_id","t":"bigint","c":"申请人 → user.id"},{"k":"","n":"reason","t":"varchar","c":"退款原因"},{"k":"","n":"amount","t":"decimal","c":"退款金额"},{"k":"","n":"status","t":"tinyint","c":"状态"},{"k":"","n":"created_at","t":"datetime","c":"申请时间"}]},
+{"id":"category","grp":"商品/分类","sub":"商品分类","x":626,"y":34,"hd":"#15803d","hdbg":"#dcfce7","bdc":"#15803d","colCount":5,"symbolSize":18,"degree":1,"itemStyle":{"color":"#dcfce7","borderColor":"#15803d","borderWidth":2},"label":{"show":true,"color":"#15803d","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"int","c":"主键"},{"k":"","n":"name","t":"varchar","c":"分类名称"},{"k":"MUL","n":"parent_id","t":"int","c":"父分类（自引用）"},{"k":"","n":"level","t":"tinyint","c":"层级"},{"k":"","n":"sort","t":"int","c":"排序"}]},
+{"id":"product","grp":"商品/分类","sub":"商品表","x":894,"y":34,"hd":"#15803d","hdbg":"#dcfce7","bdc":"#15803d","colCount":7,"symbolSize":24,"degree":4,"itemStyle":{"color":"#dcfce7","borderColor":"#15803d","borderWidth":2},"label":{"show":true,"color":"#15803d","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"","n":"name","t":"varchar","c":"商品名称"},{"k":"MUL","n":"category_id","t":"int","c":"分类 → category.id"},{"k":"","n":"price","t":"decimal","c":"原价"},{"k":"","n":"stock","t":"int","c":"总库存"},{"k":"","n":"status","t":"tinyint","c":"状态 1上架 0下架"},{"k":"","n":"description","t":"text","c":"商品详情"}]},
+{"id":"product_review","grp":"商品/分类","sub":"商品评价","x":626,"y":214,"hd":"#15803d","hdbg":"#dcfce7","bdc":"#15803d","colCount":7,"symbolSize":22,"degree":3,"itemStyle":{"color":"#dcfce7","borderColor":"#15803d","borderWidth":2},"label":{"show":true,"color":"#15803d","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"product_id","t":"bigint","c":"商品 → product.id"},{"k":"MUL","n":"user_id","t":"bigint","c":"评价人 → user.id"},{"k":"MUL","n":"order_id","t":"bigint","c":"关联订单 → order.id"},{"k":"","n":"rating","t":"tinyint","c":"评分 1-5"},{"k":"","n":"content","t":"text","c":"评价内容"},{"k":"","n":"created_at","t":"datetime","c":"评价时间"}]},
+{"id":"sku","grp":"商品/分类","sub":"商品 SKU（规格）","x":894,"y":258,"hd":"#15803d","hdbg":"#dcfce7","bdc":"#15803d","colCount":6,"symbolSize":22,"degree":3,"itemStyle":{"color":"#dcfce7","borderColor":"#15803d","borderWidth":2},"label":{"show":true,"color":"#15803d","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"product_id","t":"bigint","c":"商品 → product.id"},{"k":"","n":"spec_values","t":"varchar","c":"规格值 JSON"},{"k":"","n":"price","t":"decimal","c":"售价"},{"k":"","n":"stock","t":"int","c":"库存"},{"k":"UNI","n":"barcode","t":"varchar","c":"条形码"}]},
+{"id":"dict_order_status","grp":"字典/编码","sub":"订单状态字典","x":1238,"y":34,"hd":"#0e7490","hdbg":"#cffafe","bdc":"#0e7490","colCount":4,"symbolSize":16,"degree":0,"itemStyle":{"color":"#cffafe","borderColor":"#0e7490","borderWidth":2},"label":{"show":true,"color":"#0e7490","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"int","c":"主键"},{"k":"","n":"code","t":"tinyint","c":"状态码"},{"k":"","n":"name","t":"varchar","c":"状态名称"},{"k":"","n":"description","t":"varchar","c":"说明"}]},
+{"id":"order","grp":"交易/订单","sub":"订单主表","x":14,"y":536,"hd":"#b45309","hdbg":"#fff7ed","bdc":"#b45309","colCount":9,"symbolSize":32,"degree":8,"itemStyle":{"color":"#fff7ed","borderColor":"#b45309","borderWidth":2},"label":{"show":true,"color":"#b45309","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"UNI","n":"order_no","t":"varchar","c":"订单编号"},{"k":"MUL","n":"user_id","t":"bigint","c":"用户 → user.id"},{"k":"MUL","n":"address_id","t":"bigint","c":"收货地址 → user_address.id"},{"k":"","n":"total_amount","t":"decimal","c":"订单总额"},{"k":"","n":"pay_amount","t":"decimal","c":"实付金额"},{"k":"","n":"status","t":"tinyint","c":"订单状态"},{"k":"","n":"pay_time","t":"datetime","c":"支付时间"},{"k":"","n":"created_at","t":"datetime","c":"下单时间"}]},
+{"id":"order_item","grp":"交易/订单","sub":"订单明细表","x":14,"y":804,"hd":"#b45309","hdbg":"#fff7ed","bdc":"#b45309","colCount":7,"symbolSize":22,"degree":3,"itemStyle":{"color":"#fff7ed","borderColor":"#b45309","borderWidth":2},"label":{"show":true,"color":"#b45309","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"order_id","t":"bigint","c":"订单 → order.id"},{"k":"MUL","n":"product_id","t":"bigint","c":"商品 → product.id"},{"k":"MUL","n":"sku_id","t":"bigint","c":"SKU → sku.id"},{"k":"","n":"quantity","t":"int","c":"数量"},{"k":"","n":"unit_price","t":"decimal","c":"单价快照"},{"k":"","n":"product_name","t":"varchar","c":"商品名称快照"}]},
+{"id":"payment","grp":"交易/订单","sub":"支付记录表","x":14,"y":1028,"hd":"#b45309","hdbg":"#fff7ed","bdc":"#b45309","colCount":7,"symbolSize":18,"degree":1,"itemStyle":{"color":"#fff7ed","borderColor":"#b45309","borderWidth":2},"label":{"show":true,"color":"#b45309","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"order_id","t":"bigint","c":"订单 → order.id"},{"k":"","n":"pay_method","t":"tinyint","c":"支付方式"},{"k":"","n":"amount","t":"decimal","c":"支付金额"},{"k":"","n":"trade_no","t":"varchar","c":"第三方交易号"},{"k":"","n":"status","t":"tinyint","c":"支付状态"},{"k":"","n":"paid_at","t":"datetime","c":"支付时间"}]},
+{"id":"user","grp":"用户/权限","sub":"用户表","x":626,"y":536,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","colCount":7,"symbolSize":28,"degree":6,"itemStyle":{"color":"#ede9fe","borderColor":"#7c3aed","borderWidth":2},"label":{"show":true,"color":"#7c3aed","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"UNI","n":"email","t":"varchar","c":"邮箱"},{"k":"","n":"username","t":"varchar","c":"用户名"},{"k":"","n":"password_hash","t":"varchar","c":"密码哈希"},{"k":"","n":"phone","t":"varchar","c":"手机号"},{"k":"","n":"status","t":"tinyint","c":"状态"},{"k":"","n":"created_at","t":"datetime","c":"注册时间"}]},
+{"id":"user_address","grp":"用户/权限","sub":"用户收货地址","x":626,"y":760,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","colCount":8,"symbolSize":20,"degree":2,"itemStyle":{"color":"#ede9fe","borderColor":"#7c3aed","borderWidth":2},"label":{"show":true,"color":"#7c3aed","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"user_id","t":"bigint","c":"用户 → user.id"},{"k":"","n":"name","t":"varchar","c":"收件人"},{"k":"","n":"phone","t":"varchar","c":"联系电话"},{"k":"","n":"province","t":"varchar","c":"省份"},{"k":"","n":"city","t":"varchar","c":"城市"},{"k":"","n":"address","t":"varchar","c":"详细地址"},{"k":"","n":"is_default","t":"tinyint","c":"是否默认"}]},
+{"id":"user_coupon","grp":"用户/权限","sub":"用户优惠券","x":626,"y":1006,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","colCount":6,"symbolSize":22,"degree":3,"itemStyle":{"color":"#ede9fe","borderColor":"#7c3aed","borderWidth":2},"label":{"show":true,"color":"#7c3aed","fontSize":12,"fontWeight":"bold","formatter":"{b}"},"colData":[{"k":"PRI","n":"id","t":"bigint","c":"主键"},{"k":"MUL","n":"user_id","t":"bigint","c":"用户 → user.id"},{"k":"MUL","n":"coupon_id","t":"int","c":"优惠券模板 → coupon.id"},{"k":"","n":"status","t":"tinyint","c":"0未用 1已用 2过期"},{"k":"MUL","n":"order_id","t":"bigint","c":"使用订单 → order.id"},{"k":"","n":"expire_at","t":"datetime","c":"过期时间"}]}
+];
+const EDGES=[
+{"source":"user_address","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"product","target":"category","pairs":[{"sf":"category_id","tf":"id","desc":"category_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"sku","target":"product","pairs":[{"sf":"product_id","tf":"id","desc":"product_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"order","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"order","target":"user_address","pairs":[{"sf":"address_id","tf":"id","desc":"address_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"order_item","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"order_item","target":"product","pairs":[{"sf":"product_id","tf":"id","desc":"product_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"order_item","target":"sku","pairs":[{"sf":"sku_id","tf":"id","desc":"sku_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"payment","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"cart","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"cart","target":"sku","pairs":[{"sf":"sku_id","tf":"id","desc":"sku_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"user_coupon","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"user_coupon","target":"coupon","pairs":[{"sf":"coupon_id","tf":"id","desc":"coupon_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"user_coupon","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"product_review","target":"product","pairs":[{"sf":"product_id","tf":"id","desc":"product_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"product_review","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"product_review","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"logistics","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"refund","target":"order","pairs":[{"sf":"order_id","tf":"id","desc":"order_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}},
+{"source":"refund","target":"user","pairs":[{"sf":"user_id","tf":"id","desc":"user_id→id"}],"lineStyle":{"width":1.5,"curveness":0.12,"color":"#475569","opacity":0.6}}
+];
+const GROUPS=[
+{"id":"其他","label":"其他","x":0,"y":20,"w":540,"h":454,"hd":"#475569","hdbg":"#f1f5f9","bdc":"#475569","cx":270,"cy":247},
+{"id":"商品/分类","label":"商品/分类","x":612,"y":20,"w":540,"h":454,"hd":"#15803d","hdbg":"#dcfce7","bdc":"#15803d","cx":882,"cy":247},
+{"id":"字典/编码","label":"字典/编码","x":1224,"y":20,"w":272,"h":186,"hd":"#0e7490","hdbg":"#cffafe","bdc":"#0e7490","cx":1360,"cy":113},
+{"id":"交易/订单","label":"交易/订单","x":0,"y":522,"w":272,"h":744,"hd":"#b45309","hdbg":"#fff7ed","bdc":"#b45309","cx":136,"cy":894},
+{"id":"用户/权限","label":"用户/权限","x":612,"y":522,"w":272,"h":700,"hd":"#7c3aed","hdbg":"#ede9fe","bdc":"#7c3aed","cx":748,"cy":872}
+];
+const CATS=[{"name":"商品/分类"},{"name":"其他"},{"name":"交易/订单"},{"name":"字典/编码"},{"name":"用户/权限"}];
+
+const CANVAS_W=1576;const CANVAS_H=1346;const FOLD_N=10;
+// ── adjacency ──────────────────────────────────────────────────────────────
+const adjOut={},adjIn={};
+NODES.forEach(n=>{adjOut[n.id]=[];adjIn[n.id]=[];});
+EDGES.forEach(e=>{adjOut[e.source]?.push(e);adjIn[e.target]?.push(e);});
+// ── state ──────────────────────────────────────────────────────────────────
+const hiddenGrps=new Set();
+let showLabels=true,nameMode='en',darkMode=false,activeId=null;
+let pendingId=null,mdX=0,mdY=0;
+// ── chart ──────────────────────────────────────────────────────────────────
+let chart=initChart();
+function initChart(){
+  const c=echarts.init(document.getElementById('chart'),darkMode?'dark':'light',{renderer:'canvas'});
+  c.on('mousedown',{dataType:'node'},p=>{pendingId=p.data.id;mdX=p.event.offsetX;mdY=p.event.offsetY;});
+  c.getZr().on('mouseup',e=>{
+    if(!pendingId)return;
+    const dx=e.offsetX-mdX,dy=e.offsetY-mdY;
+    if(Math.sqrt(dx*dx+dy*dy)<8)openDet(pendingId);
+    pendingId=null;
+  });
+  c.getZr().on('click',e=>{if(!e.target)closeDet();});
+  return c;
+}
+window.addEventListener('resize',()=>chart.resize());
+const css=p=>getComputedStyle(document.documentElement).getPropertyValue(p).trim();
+function nodeName(n){return nameMode==='cn'?(n.sub||n.id):n.id;}
+function buildOption(){
+  const vis=new Set(NODES.filter(n=>!hiddenGrps.has(n.grp)).map(n=>n.id));
+  const ns=NODES.filter(n=>vis.has(n.id)).map(n=>({
+    ...n,name:nodeName(n),
+    label:{...n.label,show:showLabels,fontSize:nameMode==='cn'?11:12,fontWeight:'bold',color:n.itemStyle.borderColor},
+  }));
+  const lc=css('--lc'),ec=css('--ec');
+  const es=EDGES.filter(e=>vis.has(e.source)&&vis.has(e.target)).map(e=>
+    ({...e,lineStyle:{...e.lineStyle,color:lc},emphasis:{lineStyle:{color:ec,width:2.5,opacity:1}}}));
+  const ntc=css('--ntc'),mc=css('--muted'),dc=css('--dim'),ac=css('--ac');
+  return {
+    backgroundColor:css('--cbg'),
+    tooltip:{
+      trigger:'item',backgroundColor:css('--ttbg'),borderColor:css('--ttbd'),
+      padding:[7,11],textStyle:{color:css('--tttext'),fontSize:13},
+      formatter(p){
+        if(p.dataType==='node'){
+          const n=p.data,deg=(adjOut[n.id]?.length||0)+(adjIn[n.id]?.length||0);
+          return `<b style="font-family:monospace;color:${ntc}">${n.id}</b><br/>
+            <span style="color:${mc}">${n.sub}</span><br/>
+            <span style="color:${dc}">${n.colCount}列 · ${deg}条关联</span>`;
+        }
+        if(p.dataType==='edge'){
+          const lines=p.data.pairs.map(p2=>
+            `<span style="font-family:monospace;color:${ac}">${p2.sf}</span> → <span style="font-family:monospace;color:${ac}">${p2.tf}</span>  <span style="color:${dc}">${p2.desc}</span>`
+          ).join('<br/>');
+          return `<b style="color:${ntc}">${p.data.source}</b><br/><b style="color:${ntc}">${p.data.target}</b><br/>${lines}`;
+        }
+        return '';
+      }
+    },
+    series:[{
+      type:'graph',layout:'force',data:ns,links:es,categories:CATS,
+      roam:true,draggable:true,focusNodeAdjacency:true,
+      force:{repulsion:340,gravity:0.05,edgeLength:[80,230],friction:0.55},
+      lineStyle:{curveness:0.12},
+      emphasis:{focus:'adjacency',label:{show:true}},
+      blur:{itemStyle:{opacity:.1},lineStyle:{opacity:.04}},
+    }]
+  };
+}
+chart.setOption(buildOption());
+// ── detail ──────────────────────────────────────────────────────────────────
+function badge(k){
+  if(k==='PRI')return'<span class="fk fpk">PK</span>';
+  if(k==='UNI')return'<span class="fk fuk">UK</span>';
+  if(k==='MUL')return'<span class="fk fix">IX</span>';
+  return'';
+}
+function openDet(id,hiCol){
+  const n=NODES.find(x=>x.id===id);if(!n)return;
+  activeId=id;
+  document.getElementById('d-name').textContent=n.id;
+  document.getElementById('d-sub').textContent=n.sub;
+  const outC=adjOut[id]?.length||0,inC=adjIn[id]?.length||0;
+  document.getElementById('d-meta').innerHTML=`<span>${n.colCount}列</span><span>→${outC}个关联</span><span>←${inC}个引用</span>`;
+  const tf=document.getElementById('tf');
+  tf.innerHTML=n.colData.map(c=>{
+    const hi=hiCol&&(c.n.toLowerCase().includes(hiCol)||c.c.toLowerCase().includes(hiCol))?' mf':'';
+    return`<div class="fr${hi}">${badge(c.k)}<span class="fn" title="${c.n}">${c.n}</span><span class="ft">${c.t}</span><span class="fc" title="${c.c}">${c.c}</span></div>`;
+  }).join('');
+  const tr=document.getElementById('tr');
+  const ol=(adjOut[id]||[]).map(e=>`<div class="ri"><div><span class="ra">→</span><span class="rt">${e.target}</span></div>${e.pairs.map(p=>`<div class="rd">${p.desc}</div><div class="rf">${p.sf} → ${p.tf}</div>`).join('')}</div>`);
+  const il=(adjIn[id]||[]).map(e=>`<div class="ri"><div><span class="ra">←</span><span class="rt">${e.source}</span></div>${e.pairs.map(p=>`<div class="rd">${p.desc}</div><div class="rf">${p.sf} ← ${p.tf}</div>`).join('')}</div>`);
+  tr.innerHTML=ol.concat(il).join('')||`<div style="padding:10px;color:var(--dim);font-size:13px">无关联</div>`;
+  document.getElementById('det').classList.remove('hide');
+  showTab('f');
+  if(hiCol)setTimeout(()=>{const f=tf.querySelector('.mf');if(f)f.scrollIntoView({block:'nearest'});},50);
+  document.querySelectorAll('.st').forEach(el=>el.classList.remove('active'));
+  const sbEl=document.getElementById('sb_'+id);
+  if(sbEl){sbEl.classList.add('active');sbEl.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+function closeDet(){
+  document.getElementById('det').classList.add('hide');activeId=null;
+  document.querySelectorAll('.st').forEach(el=>el.classList.remove('active'));
+  chart.dispatchAction({type:'downplay'});
+}
+function showTab(t){
+  document.getElementById('tf').className=t==='f'?'show':'';
+  document.getElementById('tr').className=t==='r'?'show':'';
+  document.getElementById('tab-tf').className='tab'+(t==='f'?' on':'');
+  document.getElementById('tab-tr').className='tab'+(t==='r'?' on':'');
+}
+// ── sidebar ──────────────────────────────────────────────────────────────────
+const sbBody=document.getElementById('sb-body');
+function buildSidebar(filter){
+  const q=(filter||'').toLowerCase();
+  const grpOrder=[...new Set(NODES.map(n=>n.grp))];
+  const grpColor={};NODES.forEach(n=>{grpColor[n.grp]=n.itemStyle?.borderColor||'#64748b';});
+  sbBody.innerHTML='';
+  grpOrder.forEach(grp=>{
+    const tbls=NODES.filter(n=>n.grp===grp&&(!q||n.id.toLowerCase().includes(q)||n.sub.toLowerCase().includes(q)));
+    if(!tbls.length)return;
+    const color=grpColor[grp];
+    const ge=document.createElement('div');ge.className='sg';
+    const he=document.createElement('div');he.className='sg-hd';
+    he.innerHTML=`<div class="gdot" style="background:${color}"></div><span>${grp} (${tbls.length})</span><span class="ga">▾</span>`;
+    const ie=document.createElement('div');ie.className='sg-items';
+    he.addEventListener('click',()=>{he.classList.toggle('col');ie.classList.toggle('hide');});
+    tbls.forEach(n=>{
+      const el=document.createElement('div');
+      el.className='st'+(n.id===activeId?' active':'');el.id='sb_'+n.id;
+      el.innerHTML=`<span class="st-n">${n.id}</span><span class="st-s">${n.sub}</span>`;
+      el.addEventListener('click',()=>{
+        openDet(n.id);
+        const idx=NODES.findIndex(x=>x.id===n.id);
+        if(idx>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:[idx]});
+      });
+      ie.appendChild(el);
+    });
+    ge.appendChild(he);ge.appendChild(ie);sbBody.appendChild(ge);
+  });
+}
+buildSidebar();
+document.getElementById('sb-q').addEventListener('input',e=>buildSidebar(e.target.value));
+// ── search ───────────────────────────────────────────────────────────────────
+const searchEl=document.getElementById('search'),scEl=document.getElementById('sc'),srEl=document.getElementById('sr');
+function hiStr(str,q){
+  if(!q)return str;
+  return str.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark class="hi">$1</mark>');
+}
+searchEl.addEventListener('input',()=>{
+  const q=searchEl.value.trim().toLowerCase();
+  if(!q){srEl.style.display='none';scEl.textContent='';chart.dispatchAction({type:'downplay'});return;}
+  const res=NODES.map(n=>{
+    const th=n.id.toLowerCase().includes(q)||n.sub.toLowerCase().includes(q);
+    const ch=n.colData.filter(c=>c.n.toLowerCase().includes(q)||c.c.toLowerCase().includes(q));
+    return(!th&&!ch.length)?null:{n,th,ch};
+  }).filter(Boolean);
+  scEl.textContent=res.length?res.length+'个':'无';
+  chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:res.map(r=>NODES.findIndex(x=>x.id===r.n.id)).filter(i=>i>=0)});
+  srEl.innerHTML=res.length
+    ?res.slice(0,40).map(({n,ch})=>
+        `<div class="sr-row" onclick="pickSearch('${n.id}','${q}')">
+          <div class="sr-tn">${hiStr(n.id,q)}</div>
+          <div class="sr-sub">${hiStr(n.sub,q)}</div>
+          ${ch.length?'<div class="sr-col">'+ch.slice(0,3).map(c=>hiStr(c.n,q)+(c.c?' — '+hiStr(c.c,q):'')).join('  ')+'</div>':''}
+        </div>`).join('')
+    :`<div style="padding:10px 12px;color:var(--dim);font-size:13px">无匹配</div>`;
+  srEl.style.display='block';
+});
+function pickSearch(id,q){
+  srEl.style.display='none';searchEl.value='';scEl.textContent='';
+  chart.dispatchAction({type:'downplay'});openDet(id,q);
+  const idx=NODES.findIndex(x=>x.id===id);
+  if(idx>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:[idx]});
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#sw')&&!e.target.closest('#sr'))srEl.style.display='none';});
+// ── legend ───────────────────────────────────────────────────────────────────
+function buildLegend(){
+  const lg=document.getElementById('legend');lg.innerHTML='';
+  const gc={};NODES.forEach(n=>{gc[n.grp]=n.itemStyle?.borderColor||'#64748b';});
+  Object.entries(gc).forEach(([label,color])=>{
+    const cnt=NODES.filter(n=>n.grp===label).length;
+    const li=document.createElement('div');
+    li.className='li'+(hiddenGrps.has(label)?' off':'');
+    li.innerHTML=`<div class="ld" style="background:${color}25;border:1.5px solid ${color}"></div><span>${label}(${cnt})</span>`;
+    li.title='点击切换显示';
+    li.addEventListener('click',()=>{hiddenGrps.has(label)?hiddenGrps.delete(label):hiddenGrps.add(label);buildLegend();chart.setOption(buildOption());});
+    lg.appendChild(li);
+  });
+}
+buildLegend();
+// ── controls ─────────────────────────────────────────────────────────────────
+function toggleSb(){
+  const el=document.getElementById('sb'),btn=document.getElementById('btn-sb');
+  el.classList.toggle('hide');const h=el.classList.contains('hide');
+  btn.textContent=h?'显示列表':'隐藏列表';btn.classList.toggle('on',!h);
+  setTimeout(()=>chart.resize(),180);
+}
+function toggleLabels(){
+  showLabels=!showLabels;const btn=document.getElementById('btn-labels');
+  btn.textContent=showLabels?'隐藏标签':'显示标签';btn.classList.toggle('on',showLabels);
+  chart.setOption(buildOption());
+}
+function toggleNM(){
+  nameMode=nameMode==='en'?'cn':'en';const btn=document.getElementById('btn-nm');
+  btn.textContent=nameMode==='en'?'显示中文名':'显示表名';btn.classList.toggle('on',nameMode==='cn');
+  chart.setOption(buildOption());
+}
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+  document.getElementById('btn-theme').textContent=darkMode?'☀ 亮色模式':'🌙 暗色模式';
+  chart.dispose();chart=initChart();chart.setOption(buildOption());
+  setTimeout(()=>chart.resize(),50);
+}
+function resetView(){hiddenGrps.clear();buildLegend();chart.setOption(buildOption(),true);}
+</script>
+</body>
+</html>
